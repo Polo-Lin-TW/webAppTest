@@ -5,16 +5,16 @@ services:
       dockerfile: Dockerfile
     container_name: vue3-webapp
     ports:
-      - "8080:5000"
+      - "8080:80"
     restart: unless-stopped
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
     networks:
       - webapp-network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.vue-app.rule=Host(`localhost`)"
-      - "traefik.http.services.vue-app.loadbalancer.server.port=5000"
+      - "traefik.http.routers.vue-app.rule=Host(`localhost`) || Host(`ac.ggcluster.com`)"
+      - "traefik.http.services.vue-app.loadbalancer.server.port=80"
 
 networks:
   webapp-network:
