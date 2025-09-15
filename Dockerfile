@@ -1,7 +1,6 @@
-# Multi-stage Dockerfile for Vue 3 application
+# Dockerfile for Vue 3 application with Vite dev server
 
-# Stage 1: Build stage
-FROM node:18-alpine as build-stage
+FROM node:18-alpine
 
 # 設定工作目錄
 WORKDIR /app
@@ -9,30 +8,18 @@ WORKDIR /app
 # 複製 package.json
 COPY package.json ./
 
-# 安裝依賴套件 (包含開發依賴，建構時需要)
+# 安裝依賴套件
 RUN npm install
 
 # 複製專案檔案
 COPY . .
 
-# 建構應用程式
-RUN npm run build
-
-# Stage 2: Production stage
-FROM nginx:alpine as production-stage
-
-# 複製自定義的 nginx 配置
-COPY nginx/nginx.conf /etc/nginx/nginx.conf
-
-# 從建構階段複製編譯後的檔案到 nginx 的預設目錄
-COPY --from=build-stage /app/dist /usr/share/nginx/html
-
-# 暴露 80 port
-EXPOSE 80
+# 暴露 Vite 開發伺服器預設 port
+EXPOSE 5173
 
 # 設定健康檢查
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost/ || exit 1
+  CMD curl -f http://localhost:5173/ || exit 1
 
-# 啟動 nginx
-CMD ["nginx", "-g", "daemon off;"]
+# 啟動 Vite 開發伺服器
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
