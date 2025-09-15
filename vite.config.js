@@ -5,7 +5,8 @@ export default defineConfig({
   plugins: [vue()],
   server: {
     host: '0.0.0.0',
-    port: 5000
+    port: 5000,
+    allowedHosts: ['ac.ggcluster.com']
   },
   build: {
     outDir: 'dist'
